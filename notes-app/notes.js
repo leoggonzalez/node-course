@@ -1,7 +1,7 @@
 const fs = require('fs');
 const chalk = require('chalk');
 
-function loadNotes() {
+const loadNotes = () => {
   try {
     const dataBuffer = fs.readFileSync('notes.json');
     const dataJSON = dataBuffer.toString();
@@ -11,17 +11,15 @@ function loadNotes() {
   }
 };
 
-function saveNotes(notes) {
+const saveNotes = (notes) => {
   const dataJSON = JSON.stringify(notes);
   fs.writeFileSync('notes.json', dataJSON);
 }
 
 
-function getNotes() {
-  return loadNotes();
-}
+const getNotes = () => loadNotes();
 
-function addNote(title, body) {
+const addNote = (title, body) => {
   const notes = loadNotes();
 
   try {
@@ -43,7 +41,7 @@ function addNote(title, body) {
   }
 }
 
-function removeNote(title) {
+const removeNote = (title) => {
   try {
     const notes = loadNotes();
     const note = notes.find(item => item.title === title);
