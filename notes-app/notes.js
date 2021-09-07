@@ -1,4 +1,5 @@
 const fs = require('fs');
+const chalk = require('chalk');
 
 function loadNotes() {
   try {
@@ -36,8 +37,9 @@ function addNote(title, body) {
     });
 
     saveNotes(notes);
+    console.log(chalk.green('Note was succesfully added!'))
   } catch (error) {
-    console.log(error);
+    console.log(chalk.red(error));
   }
 }
 
@@ -49,8 +51,9 @@ function removeNote(title) {
       throw new Error('Note does not exist');
     }
     saveNotes(notes.filter(item => item.title !== title));
+    console.log(chalk.green('Note was succesfully removed!'))
   } catch (error) {
-    console.log(error);
+    console.log(chalk.red(error));
   }
 }
 

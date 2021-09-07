@@ -48,7 +48,7 @@ yargs.command({
   describe: 'List all notes',
   handler: function () {
     const notes = getNotes();
-    notes.forEach(note => console.log(note.title));
+    notes.forEach((note, index) => console.log(`${index + 1}. ${note.title}`));
   }
 });
 
