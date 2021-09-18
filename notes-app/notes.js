@@ -17,15 +17,19 @@ const saveNotes = (notes) => {
 }
 
 
-const getNotes = () => loadNotes();
+const getNotes = () => {
+  const notes = loadNotes();
+  console.log(chalk.yellow('Your notes: '));
+  notes.forEach((note, index) => console.log(`${index + 1}. ${note.title}`));
+};
 
 const addNote = (title, body) => {
   const notes = loadNotes();
 
   try {
-    const duplicatedNotes = notes.filter(note => note.title === title);
+    const exists = notes.find(note => note.title === title);
 
-    if (duplicatedNotes.length) {
+    if (exists) {
       throw new Error('Note already exists');
     }
 
@@ -36,6 +40,23 @@ const addNote = (title, body) => {
 
     saveNotes(notes);
     console.log(chalk.green('Note was succesfully added!'))
+  } catch (error) {
+    console.log(chalk.red(error));
+  }
+}
+
+const readNote = (title) => {
+  const notes = loadNotes();
+
+  try {
+    const note = notes.find(note => note.title === title);
+
+    if (!note) {
+      throw new Error('Note does not exist');
+    }
+
+    console.log(chalk.green(note.title));
+    console.log(note.body)
   } catch (error) {
     console.log(chalk.red(error));
   }
@@ -58,5 +79,6 @@ const removeNote = (title) => {
 module.exports = {
   getNotes,
   addNote,
+  readNote,
   removeNote,
 };
