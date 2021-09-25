@@ -1,21 +1,31 @@
+const path = require('path');
 const express = require('express');
 
 const app = express();
 
-app.get('/', (req, res) => {
-  res.send(`
-    <h1>Hello World</h1>
-    <a href="/help">Help Page</a>
-    <a href="/about">About Page</a>
-  `);
-});
+app.set('view engine', 'hbs');
+app.use(express.static(path.join(__dirname, '../public')));
 
-app.get('/help', (req, res) => {
-  res.send('<h1>Help page</h1><a href="/">Go Back</a>');
+app.get('/', (req, res) => {
+  res.render('index', {
+    title: 'My App',
+    description: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Recusandae rem dolorem dolore eveniet exercitationem assumenda suscipit minima quisquam, non ex dolor fugit quas. Maiores, a cupiditate quisquam natus eius adipisci!'
+  });
 });
 
 app.get('/about', (req, res) => {
-  res.send('<h1>About page</h1><a href="/">Go Back</a>');
+  res.render('about');
+});
+
+app.get('/help', (req, res) => {
+  res.render('help');
+});
+
+app.get('/weather', (req, res) => {
+  res.send({
+    weather: 32,
+    location: 'Berlin',
+  })
 });
 
 app.listen(3000, () => {
