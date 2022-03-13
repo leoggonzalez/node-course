@@ -8,7 +8,7 @@ form.addEventListener('submit', (e) => {
 
   resultsDiv.innerHTML = '<p>Loading...</p>';
 
-  fetch(`http://localhost:3000/weather?address=${input.value}`).then(response => {
+  fetch(`/weather?address=${input.value}`).then(response => {
     response.json().then(data => {
 
       if (data.error) {
