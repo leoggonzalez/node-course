@@ -14,63 +14,75 @@ app.get('/', (req, res) => {
 })
 
 /* User CREATE  */
-app.post('/users', (req, res) => {
+app.post('/users', async (req, res) => {
   const user = new User(req.body);
-  // res.send(resp);
-  user.save().then((resp) => {
-    res.send(resp);
-  }).catch((error) => {
-    res.status(400);
-    res.send(error);
-  })
+  try {
+    res.send(await user.save())
+  } catch (error) {
+    res.status(400).send(error);
+  }
 });
 /* User Read  */
-app.get('/users', (req, res) => {
-  User.find().then((resp) => {
-    res.send(resp)
-  }).catch((error) => {
-    res.status(404);
-    res.send(error);
-  })
+app.get('/users', async (req, res) => {
+  try {
+    res.send(await User.find())
+  } catch (error) {
+    res.status(404).send(error);
+  }
 })
-app.get('/users/:id', ({ params: { id } }, res) => {
-  User.findById(id).then((user) => {
+app.get('/users/:id', async ({ params: { id } }, res) => {
+  try {
+    const user = await User.findById(id);
     if (!user) {
-      return res.status(404).send()
+      return res.status(404).send('Not found')
     }
     res.send(user)
-  }).catch((error) => {
+  } catch (error) {
     res.status(500).send();
-  })
+  }
+})
+/* User Update  */
+app.patch('/users/:id', async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ['name', 'email', 'password', 'age'];
+
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!user) {
+      return res.status(404).send(`User with id: ${req.params.id} not found`);
+    }
+    res.send(user);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 })
 /* Task Create  */
-app.post('/tasks', (req, res) => {
+app.post('/tasks', async (req, res) => {
   const task = new Task(req.body);
-  task.save().then((resp) => {
-    res.send(resp);
-  }).catch((error) => {
-    res.status(400);
-    res.send(error);
-  })
+  try {
+    res.send(await task.save());
+  } catch (error) {
+    res.status(400).send(error);
+  }
 });
-/* User Read  */
-app.get('/tasks', (_, res) => {
-  Task.find().then((resp) => {
-    res.send(resp)
-  }).catch((error) => {
-    res.status(404);
-    res.send(error);
-  })
+/* Task Read  */
+app.get('/tasks', async (_, res) => {
+  try {
+    res.send(await Task.find())
+  } catch (error) {
+    res.status(404).send(error);
+  }
 })
-app.get('/tasks/:id', ({ params: { id } }, res) => {
-  Task.findById(id).then((task) => {
+app.get('/tasks/:id', async ({ params: { id } }, res) => {
+  try {
+    const task = await Task.findById(id);
     if (!task) {
-      return res.status(404).send()
+      res.status(404).send('Task not found')
     }
     res.send(task)
-  }).catch(() => {
+  } catch (error) {
     res.status(500).send();
-  })
+  }
 })
 
 app.listen(port, () => {
