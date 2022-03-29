@@ -34,17 +34,24 @@ router.get('/users/:id', async ({ params: { id } }, res) => {
 })
 /* User Update  */
 router.patch('/users/:id', async (req, res) => {
-  const invalidOperations = getInvalidOperations(Object.keys(req.body), ['name', 'email', 'password', 'age']);
+  const updates = Object.keys(req.body);
+  const invalidOperations = getInvalidOperations(updates, ['name', 'email', 'password', 'age']);
 
   try {
     if (invalidOperations.length) {
       throw new Error(`Invalid operation/s: ${invalidOperations.join(' - ')}`);
     }
 
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const user = await User.findById(req.params.id);
+
     if (!user) {
       return res.status(404).send(`User with id: ${req.params.id} not found`);
     }
+
+    updates.forEach(update => user[update] = req.body[update]);
+
+    await user.save();
+
     res.send(user);
   } catch (error) {
     res.status(500).send(error.message);
