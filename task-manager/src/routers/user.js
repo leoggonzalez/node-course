@@ -4,13 +4,28 @@ const { getInvalidOperations } = require('../model/util.js');
 
 const router = new express.Router();
 
+/* User LOGIN  */
+router.post('/users/login', async (req, res) => {
+  try {
+    const user = await User.findByCredentials(req.body.email, req.body.password);
+    const token = await user.generateAuthToken();
+
+    res.send({ user, token });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 /* User CREATE  */
 router.post('/users', async (req, res) => {
   const user = new User(req.body);
   try {
-    res.send(await user.save())
+    await user.save();
+    const token = await user.generateAuthToken();
+
+    res.send({ user, token });
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).send(error.message);
   }
 });
 /* User Read  */
