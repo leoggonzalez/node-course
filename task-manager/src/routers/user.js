@@ -1,6 +1,7 @@
 const express = require('express');
 const { User } = require('../model/user');
 const { getInvalidOperations } = require('../model/util.js');
+const { auth } = require('./../middleware/auth');
 
 const router = new express.Router();
 
@@ -29,13 +30,14 @@ router.post('/users', async (req, res) => {
   }
 });
 /* User Read  */
-router.get('/users', async (req, res) => {
+router.get('/users', auth, async (req, res) => {
   try {
-    res.send(await User.find())
+    res.send(await User.find());
   } catch (error) {
     res.status(404).send(error);
   }
-})
+});
+
 router.get('/users/:id', async ({ params: { id } }, res) => {
   try {
     const user = await User.findById(id);
